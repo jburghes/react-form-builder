@@ -3,8 +3,7 @@
 */
 
 import React from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import DragAndDrop from './drag-and-drop';
 import { IntlProvider } from 'react-intl';
 import Preview from './preview';
 import Toolbar from './toolbar';
@@ -52,19 +51,19 @@ class ReactFormBuilder extends React.Component {
     const currentAppLocale = AppLocale[language];
     if (this.props.toolbarItems) { toolbarProps.items = this.props.toolbarItems; }
     return (
-      <DndProvider backend={HTML5Backend}>
+      <DragAndDrop manager={this.props.manager}>
         <IntlProvider
           locale={currentAppLocale.locale}
           messages={currentAppLocale.messages}>
           <div>
             {/* <div>
-           <p>
-             It is easy to implement a sortable interface with React DnD. Just make
-             the same component both a drag source and a drop target, and reorder
-             the data in the <code>hover</code> handler.
-           </p>
-           <Container />
-         </div> */}
+              <p>
+                It is easy to implement a sortable interface with React DnD. Just make
+                the same component both a drag source and a drop target, and reorder
+                the data in the <code>hover</code> handler.
+              </p>
+              <Container />
+            </div> */}
             <div className="react-form-builder clearfix">
               <div>
                 <Preview
@@ -90,7 +89,7 @@ class ReactFormBuilder extends React.Component {
             </div>
           </div>
         </IntlProvider>
-      </DndProvider>
+      </DragAndDrop>
     );
   }
 }

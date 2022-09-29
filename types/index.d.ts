@@ -35,6 +35,7 @@ type BaseElement = {
   canHavePageBreakBefore: boolean;
   canPopulateFromApi: boolean;
   text: string;
+  validate: () => string;
 };
 export type StaticElement = {
   bold: boolean;

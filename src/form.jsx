@@ -207,7 +207,11 @@ class ReactForm extends React.Component {
       const { onSubmit } = this.props;
       if (onSubmit) {
         const data = this._collectFormData(this.props.data);
-        onSubmit(data);
+        const submitErrors = onSubmit(data);
+
+        if (submitErrors && submitErrors.length > 0) {
+          this.emitter.emit('formValidation', submitErrors);
+        }
       } else {
         const $form = ReactDOM.findDOMNode(this.form);
         $form.submit();
@@ -227,6 +231,13 @@ class ReactForm extends React.Component {
     data_items.forEach(item => {
       if (item.element === 'Signature') {
         this._getSignatureImg(item);
+      }
+
+      if (item.validate) {
+        const error = item.validate();
+        if (error) {
+          errors.push(error);
+        }
       }
 
       if (this._isInvalid(item)) {
