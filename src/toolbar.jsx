@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
+import cloneDeep from "lodash.clonedeep";
 import ToolbarItem from './toolbar-draggable-item';
 import ID from './UUID';
 import store from './stores/store';
@@ -337,6 +338,10 @@ class Toolbar extends React.Component {
     elementOptions.canHaveOptionCorrect = item.canHaveOptionCorrect !== false;
     elementOptions.canHaveOptionValue = item.canHaveOptionValue !== false;
     elementOptions.canPopulateFromApi = item.canPopulateFromApi !== false;
+    elementOptions.canHaveOptionSingleValue = item.canHaveOptionSingleValue !== false;
+    elementOptions.canHaveOptionTextHidden = item.canHaveOptionTextHidden !== false;
+    elementOptions.canBeDeleted = item.canBeDeleted !== false;
+    elementOptions.includeOptions = item.includeOptions !== false;
 
     if (item.class_name) {
       elementOptions.class_name = item.class_name;
@@ -376,7 +381,7 @@ class Toolbar extends React.Component {
 
     if (item.options) {
       if (item.options.length > 0) {
-        elementOptions.options = item.options;
+        elementOptions.options = cloneDeep(item.options);
       } else {
         elementOptions.options = Toolbar._defaultItemOptions(elementOptions.element, intl);
       }

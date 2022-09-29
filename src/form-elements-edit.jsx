@@ -425,6 +425,8 @@ export default class FormElementsEdit extends React.Component {
           <DynamicOptionList showCorrectColumn={this.props.showCorrectColumn}
             canHaveOptionCorrect={canHaveOptionCorrect}
             canHaveOptionValue={canHaveOptionValue}
+            canHaveOptionSingleValue={canHaveOptionSingleValue}
+            canHaveOptionTextHidden={canHaveOptionTextHidden}
             data={this.props.preview.state.data}
             updateElement={this.props.updateElement}
             preview={this.props.preview}

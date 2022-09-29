@@ -13,7 +13,8 @@ class CustomElement extends Component {
     const props = {};
     props.name = this.props.data.field_name;
     props.defaultValue = this.props.defaultValue;
-
+    props.emitter = this.props.emitter;
+    
     if (this.props.mutable && this.props.data.forwardRef) {
       props.ref = this.inputField;
     }

@@ -3,8 +3,8 @@
 */
 
 import React from 'react';
-import DragAndDrop from './drag-and-drop';
 import { IntlProvider } from 'react-intl';
+import DragAndDrop from './drag-and-drop';
 import Preview from './preview';
 import Toolbar from './toolbar';
 import FormGenerator from './form';

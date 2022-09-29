@@ -207,11 +207,17 @@ class ReactForm extends React.Component {
       const { onSubmit } = this.props;
       if (onSubmit) {
         const data = this._collectFormData(this.props.data);
-        const submitErrors = onSubmit(data);
-
-        if (submitErrors && submitErrors.length > 0) {
-          this.emitter.emit('formValidation', submitErrors);
-        }
+        Promise.resolve(onSubmit(data)).then(submitErrors => {
+          if (submitErrors) {
+            if (Array.isArray(submitErrors)) {
+              if (submitErrors.length > 0) {
+                this.emitter.emit('formValidation', submitErrors);
+              }
+            } else if (Object.keys(submitErrors).length > 0) {
+              this.emitter.emit('fieldValidation', submitErrors);
+            }
+          }
+        });
       } else {
         const $form = ReactDOM.findDOMNode(this.form);
         $form.submit();
@@ -299,6 +305,7 @@ class ReactForm extends React.Component {
       key={`form_${item.id}`}
       data={item}
       read_only={this.props.read_only}
+      emitter={this.emitter}
       defaultValue={this._getDefaultValue(item)} />);
   }
 
@@ -309,7 +316,7 @@ class ReactForm extends React.Component {
 
   getSimpleElement(item) {
     const Element = FormElements[item.element];
-    return (<Element mutable={true} key={`form_${item.id}`} data={item} />);
+    return (<Element mutable={true} key={`form_${item.id}`} data={item} emitter={this.emitter} />);
   }
 
   getCustomElement(item) {
@@ -333,6 +340,7 @@ class ReactForm extends React.Component {
         read_only={this.props.read_only}
         key={`form_${item.id}`}
         data={item}
+        emitter={this.emitter}
         {...inputProps}
       />
     );
