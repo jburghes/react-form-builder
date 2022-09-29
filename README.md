@@ -127,6 +127,14 @@ $ yarn start
 ```
 Then navigate to http://localhost:8080/ in your browser and you should be able to see the form builder in action.
 
+To package for local use:
+```bash
+$ npm run-script prepublishOnly
+$ npm pack
+```
+
+Then point your package.json to the local tgz file.
+
 # Customizations
 - to customize the field edit form copy "src/form-elements-edit.jsx" to your project and pass it to the ReactFormBuilder as a prop. Here is an example
 ```jsx

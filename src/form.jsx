@@ -163,6 +163,11 @@ class ReactForm extends React.Component {
       if (!ref) return null;
       itemData.value = this._getItemValue(item, ref).value;
     }
+
+    if (item.includeOptions) {
+      itemData.options = item.options;
+    }
+
     return itemData;
   }
 
