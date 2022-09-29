@@ -28,6 +28,10 @@ class ReactForm extends React.Component {
     this.answerData = this._convert(props.answer_data);
     this.emitter = new EventEmitter();
     this.getDataById = this.getDataById.bind(this);
+
+    this.state = {
+      submitting: false,
+    };
   }
 
   _convert(answers) {
@@ -200,34 +204,48 @@ class ReactForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    let errors = [];
-    if (!this.props.skip_validations) {
-      errors = this.validateForm();
-      // Publish errors, if any.
-      this.emitter.emit('formValidation', errors);
-    }
+    this.setState({
+      submitting: true,
+    }, () => {
+      // Reset the form errors on submission
+      this.emitter.emit('formValidation', undefined);
+      this.emitter.emit('fieldValidation', undefined);
 
-    // Only submit if there are no errors.
-    if (errors.length < 1) {
-      const { onSubmit } = this.props;
-      if (onSubmit) {
-        const data = this._collectFormData(this.props.data);
-        Promise.resolve(onSubmit(data)).then(submitErrors => {
-          if (submitErrors) {
-            if (Array.isArray(submitErrors)) {
-              if (submitErrors.length > 0) {
-                this.emitter.emit('formValidation', submitErrors);
-              }
-            } else if (Object.keys(submitErrors).length > 0) {
-              this.emitter.emit('fieldValidation', submitErrors);
-            }
-          }
-        });
-      } else {
-        const $form = ReactDOM.findDOMNode(this.form);
-        $form.submit();
+      let errors = [];
+      if (!this.props.skip_validations) {
+        errors = this.validateForm();
+        // Publish errors, if any.
+        this.emitter.emit('formValidation', errors);
       }
-    }
+
+      // Only submit if there are no errors.
+      if (errors.length < 1) {
+        const { onSubmit } = this.props;
+        if (onSubmit) {
+          const data = this._collectFormData(this.props.data);
+          Promise.resolve(onSubmit(data)).then(submitErrors => {
+            if (submitErrors) {
+              if (Array.isArray(submitErrors)) {
+                if (submitErrors.length > 0) {
+                  this.emitter.emit('formValidation', submitErrors);
+                }
+              } else if (Object.keys(submitErrors).length > 0) {
+                this.emitter.emit('fieldValidation', submitErrors);
+              }
+            }
+            this.setState({
+              submitting: false,
+            });
+          });
+        } else {
+          const $form = ReactDOM.findDOMNode(this.form);
+          $form.submit();
+          this.setState({
+            submitting: false,
+          });
+        }
+      }
+    });
   }
 
   validateForm() {
@@ -355,8 +373,9 @@ class ReactForm extends React.Component {
     const name = this.props.action_name || this.props.actionName;
     const actionName = name || 'Submit';
     const { submitButton = false } = this.props;
+    const { submitting } = this.state;
 
-    return submitButton || <input type='submit' className='btn btn-big' value={actionName} />;
+    return React.cloneElement(submitButton, { disabled: submitting }) || <input type='submit' className='btn btn-big' value={actionName} disabled={submitting} />;
   }
 
   handleRenderBack = () => {
